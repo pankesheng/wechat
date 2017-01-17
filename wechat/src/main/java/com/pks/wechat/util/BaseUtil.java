@@ -137,8 +137,7 @@ public class BaseUtil {
 				// 关注状态（1是关注，0是未关注），未关注时获取不到其余信息
 				weixinUserInfo.setSubscribe(jsonObject.getInt("subscribe"));
 				// 用户关注时间
-				weixinUserInfo.setSubscribeTime(jsonObject
-						.getString("subscribe_time"));
+				weixinUserInfo.setSubscribeTime(jsonObject.getString("subscribe_time"));
 				// 昵称
 				weixinUserInfo.setNickname(jsonObject.getString("nickname"));
 				// 用户的性别（1是男性，2是女性，0是未知）
@@ -152,8 +151,7 @@ public class BaseUtil {
 				// 用户的语言，简体中文为zh_CN
 				weixinUserInfo.setLanguage(jsonObject.getString("language"));
 				// 用户头像
-				weixinUserInfo
-						.setHeadImgUrl(jsonObject.getString("headimgurl"));
+				weixinUserInfo.setHeadImgUrl(jsonObject.getString("headimgurl"));
 			} catch (Exception e) {
 				if (0 == weixinUserInfo.getSubscribe()) {
 					log.error("用户{}已取消关注", weixinUserInfo.getOpenId());
