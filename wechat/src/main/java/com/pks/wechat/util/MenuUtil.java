@@ -15,14 +15,6 @@ import com.pks.wechat.menu.Menu;
 public class MenuUtil {
 	private static Logger log = LoggerFactory.getLogger(MenuUtil.class);
 
-//	// 菜单创建（POST）
-//	public final static String menu_create_url = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=ACCESS_TOKEN";
-//	// 菜单查询（GET）
-//	public final static String menu_get_url = "https://api.weixin.qq.com/cgi-bin/menu/get?access_token=ACCESS_TOKEN";
-//	// 菜单删除（GET）
-//	public final static String menu_delete_url = "https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=ACCESS_TOKEN";
-
-	
 	/** 
      * 创建菜单 
      *  

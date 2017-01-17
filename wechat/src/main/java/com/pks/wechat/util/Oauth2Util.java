@@ -17,15 +17,15 @@ public class Oauth2Util {
 
 	private static final Logger log = LoggerFactory.getLogger(Oauth2Util.class);
 	
-	public static String oauthurl(String redirect_uri){
-//		String redirect_uri = WeChatConfiguration.DOMAIN_URL+"/wxpay/oauth2.ajax";//  : -> %3A      / -> %2F
-    	redirect_uri = redirect_uri.replaceAll(":", "%3A").replaceAll("/", "%2F");
-    	String scope = "snsapi_userinfo";
-    	String state = "1";
-		String appid = WeChatConfiguration.appId;
-		String url = WeChatUrlConfiguration.OAUTH2_LOAD_URL.replace("APPID", appid).replace("REDIRECT_URI", redirect_uri).replace("SCOPE", scope).replace("STATE", state);
-		return url;
-	}
+//	public static String oauthurl(String redirect_uri){
+////		String redirect_uri = WeChatConfiguration.DOMAIN_URL+"/wxpay/oauth2.ajax";//  : -> %3A      / -> %2F
+//    	redirect_uri = redirect_uri.replaceAll(":", "%3A").replaceAll("/", "%2F");
+//    	String scope = "snsapi_userinfo";
+//    	String state = "1";
+//		String appid = WeChatConfiguration.appId;
+//		String url = WeChatUrlConfiguration.OAUTH2_LOAD_URL.replace("APPID", appid).replace("REDIRECT_URI", redirect_uri).replace("SCOPE", scope).replace("STATE", state);
+//		return url;
+//	}
 	
 	public static SNSUserInfo oauth2(String code){
 		SNSUserInfo user = null;
@@ -86,6 +86,46 @@ public class Oauth2Util {
 		}
 		return wat;
 	}
+	
+	/**
+	 * @Description: 刷新网页授权凭证
+	 * @param appId
+	 *            公众账号的唯一标识
+	 * @param refreshToken
+	 * @return
+	 * @throws
+	 * @author Administrator
+	 * @date 2015-12-22
+	 */
+	public static WeChatOauth2Token refreshOauth2AccessToken(String appId,
+			String refreshToken) {
+		WeChatOauth2Token wat = null;
+		// 拼接请求地址			 
+		String requestUrl = WeChatUrlConfiguration.OAUTH2_REFRESHTOKEN_URL; //"https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=APPID&grant_type=refresh_token&refresh_token=REFRESH_TOKEN";
+		requestUrl = requestUrl.replace("APPID", appId);
+		requestUrl = requestUrl.replace("REFRESH_TOKEN", refreshToken);
+		// 刷新网页授权凭证
+		JSONObject jsonObject = CommonUtil
+				.httpsRequest(requestUrl, "GET", null);
+		if (null != jsonObject) {
+			try {
+				wat = new WeChatOauth2Token();
+				wat.setAccessToken(jsonObject.getString("access_token"));
+				wat.setExpiresIn(jsonObject.getInt("expires_in"));
+				wat.setRefreshToken(jsonObject.getString("refresh_token"));
+				wat.setOpenId(jsonObject.getString("openid"));
+				wat.setScope(jsonObject.getString("scope"));
+			} catch (Exception e) {
+				wat = null;
+				int errorCode = jsonObject.getInt("errcode");
+				String errorMsg = jsonObject.getString("errmsg");
+				log.error("刷新网页授权凭证失败 errcode:{} errmsg:{}", errorCode,
+						errorMsg);
+			}
+		}
+		return wat;
+	}
+	
 	
 	/**
 	 * @Description: 通过网页授权获取用户信息

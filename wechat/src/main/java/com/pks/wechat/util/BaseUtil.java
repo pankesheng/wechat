@@ -119,11 +119,12 @@ public class BaseUtil {
 	 * @author Administrator
 	 * @date 2015-12-22
 	 */
-	public static WeChatUserInfo getUserInfo(String accessToken, String openId) {
+	public static WeChatUserInfo getUserInfo(String openId) {
+		AccessToken accessToken = BaseUtil.getAccessToken();
 		WeChatUserInfo weixinUserInfo = null;
 		// 拼接请求地址
 		String requestUrl = WeChatUrlConfiguration.USER_INFO_URL; // "https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
-		requestUrl = requestUrl.replace("ACCESS_TOKEN", accessToken).replace(
+		requestUrl = requestUrl.replace("ACCESS_TOKEN", accessToken.getAccess_token()).replace(
 				"OPENID", openId);
 		// 获取用户信息
 		JSONObject jsonObject = CommonUtil
@@ -178,15 +179,15 @@ public class BaseUtil {
 	 * @date 2015-12-22
 	 */
 	@SuppressWarnings({ "unchecked", "deprecation" })
-	public static WeChatUserList getUserList(String accessToken,
-			String nextOpenId) {
+	public static WeChatUserList getUserList(String nextOpenId) {
+		AccessToken accessToken = BaseUtil.getAccessToken();
 		WeChatUserList weixinUserList = null;
 		if (null == nextOpenId) {
 			nextOpenId = "";
 		}
 		// 拼接请求地址
 		String requestUrl = "https://api.weixin.qq.com/cgi-bin/user/get?access_token=ACCESS_TOKEN&next_openid=NEXT_OPENID";
-		requestUrl = requestUrl.replace("ACCESS_TOKEN", accessToken).replace(
+		requestUrl = requestUrl.replace("ACCESS_TOKEN", accessToken.getAccess_token()).replace(
 				"NEXT_OPENID", nextOpenId);
 		// 获取关注者列表
 		JSONObject jsonObject = CommonUtil

@@ -66,8 +66,16 @@
 		<aop:advisor advice-ref="txAdvice" pointcut-ref="serviceOperation" />
 	</aop:config>
 	
-	<bean id="configuration" class="com.pks.wechat.common.Configuration">
-		<property name="contextPath" value="${configuration.contextPath}"/>
+	<bean id="configuration" class="com.pks.wechat.configuration.WeChatConfiguration">
+		<property name="token" value="${wechatconfiguration.token}" />
+		<property name="appId" value="${wechatconfiguration.appId}" />
+		<property name="appSecret" value="${wechatconfiguration.appSecret}" />
+		<property name="MCH_ID" value="${wechatconfiguration.mch_id}" />
+		<property name="API_KEY" value="${wechatconfiguration.api_key}" />
+		<property name="CERT_PATH" value="${wechatconfiguration.cert_path}" />
+		<property name="NOTIFY_URL" value="${wechatconfiguration.notify_url}" />
+		<property name="DOMAIN_URL" value="${wechatconfiguration.domain_url}" />
+		<property name="PAY_ACTION" value="${wechatconfiguration.pay_action}" />
 	</bean>
-
+	
 </beans>

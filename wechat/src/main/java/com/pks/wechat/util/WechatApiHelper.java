@@ -8,8 +8,6 @@ import net.sf.json.JSONObject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.ClientProtocolException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -26,8 +24,6 @@ import com.zcj.web.dto.Page;
 
 public class WechatApiHelper {
 	
-	private static Logger log = LoggerFactory.getLogger(WechatApiHelper.class);
-	
 	/**
 	 * 发送文本客服消息
 	 * @param openid
@@ -39,8 +35,8 @@ public class WechatApiHelper {
 			return false;
 		}
 		String jsonMsg = AdvancedUtil.makeTextCustomMessage(openid, content);
-		AccessToken accessToken = AdvancedUtil.getAccessToken();
-		return AdvancedUtil.sendCustomMessage(accessToken.getAccess_token(), jsonMsg);
+		AccessToken accessToken = BaseUtil.getAccessToken();
+		return CustomerUtil.sendCustomMessage(accessToken.getAccess_token(), jsonMsg);
 	}
 
 	/**
@@ -54,8 +50,8 @@ public class WechatApiHelper {
 			return false;
 		}
 		String jsonMsg = AdvancedUtil.makeNewsCustomMessage(openid, articleList);
-		AccessToken accessToken = AdvancedUtil.getAccessToken();
-		return AdvancedUtil.sendCustomMessage(accessToken.getAccess_token(), jsonMsg);
+		AccessToken accessToken = BaseUtil.getAccessToken();
+		return CustomerUtil.sendCustomMessage(accessToken.getAccess_token(), jsonMsg);
 	}
 	
 	/**
@@ -66,32 +62,10 @@ public class WechatApiHelper {
 	 */
 	public static boolean send(String openid,Music music){
 		String jsonMsg = AdvancedUtil.makeMusicCustomMessage(openid, music);
-		AccessToken accessToken = AdvancedUtil.getAccessToken();
-		return AdvancedUtil.sendCustomMessage(accessToken.getAccess_token(), jsonMsg);
+		AccessToken accessToken = BaseUtil.getAccessToken();
+		return CustomerUtil.sendCustomMessage(accessToken.getAccess_token(), jsonMsg);
 	}
 	
-	/**
-	 * 创建自定义菜单 
-	 * @param menu 菜单 
-	 * @return
-	 */
-	public static boolean createMenu(Menu menu){
-		if(menu.getButton()==null || menu.getButton().length==0 || menu.getButton().length>3){
-			return false;
-		}
-		AccessToken accessToken = AdvancedUtil.getAccessToken();
-        String url = WeChatUrlConfiguration.MENU_CREATE_URL.replace("ACCESS_TOKEN", accessToken.getAccess_token());  
-        String jsonMenu = JSONObject.fromObject(menu).toString();  
-        JSONObject jsonObject = CommonUtil.httpsRequest(url, "POST", jsonMenu);  
-        if (null != jsonObject) {
-            if (0 != jsonObject.getInt("errcode")) {
-                System.out.println("创建菜单失败 errcode:{} errmsg:{}"+ jsonObject.getInt("errcode")+jsonObject.getString("errmsg"));
-                log.error("创建菜单失败 errcode:{} errmsg:{}", jsonObject.getInt("errcode"), jsonObject.getString("errmsg"));  
-                return false;
-            }
-        }
-		return true;
-	}
 	/***
 	 * 
 	 * @param menu
@@ -101,7 +75,7 @@ public class WechatApiHelper {
 		if(menu.getButton()==null || menu.getButton().length==0 || menu.getButton().length>3){
 			return "菜单按钮数量不符合";
 		}
-		AccessToken accessToken = AdvancedUtil.getAccessToken();
+		AccessToken accessToken = BaseUtil.getAccessToken();
         String url = WeChatUrlConfiguration.MENU_CREATE_URL.replace("ACCESS_TOKEN", accessToken.getAccess_token());  
         String jsonMenu = JSONObject.fromObject(menu).toString();  
         JSONObject jsonObject = CommonUtil.httpsRequest(url, "POST", jsonMenu);  
@@ -118,8 +92,9 @@ public class WechatApiHelper {
 		return "";
 	}
 	
+	@SuppressWarnings({ "static-access", "unused" })
 	public static void main(String[] args) throws ClientProtocolException, IOException {
-		AccessToken accessToken = AdvancedUtil.getAccessToken();
+		AccessToken accessToken = BaseUtil.getAccessToken();
 		String result = CommonUtil.httpGetRequest(WeChatUrlConfiguration.USER_LIST_URL.replace("ACCESS_TOKEN", accessToken.getAccess_token()));
 		System.out.println(result);
 		JSONObject jsonObject = new JSONObject().fromObject(result);
@@ -154,8 +129,8 @@ public class WechatApiHelper {
 			page.setTotal(0);
 			return page;
 		}
-		AccessToken accessToken = AdvancedUtil.getAccessToken();
-		JSONObject jsonObject = AdvancedUtil.getMaterailListJson(accessToken.getAccess_token(), type, offset, pagesize);
+		AccessToken accessToken = BaseUtil.getAccessToken();
+		JSONObject jsonObject = MaterialUtil.getMaterailListJson(accessToken.getAccess_token(), type, offset, pagesize);
 		if(jsonObject!=null && jsonObject.containsKey("item")){
 			if("news".equals(type)){
 				List<NewsMaterial> list = new Gson().fromJson(jsonObject.getString("item"),  new TypeToken<List<NewsMaterial>>(){}.getType());

@@ -122,8 +122,7 @@ public class CoreService {
                 String eventType = requestMap.get("Event");
                 // 订阅  
                 if (eventType.equals(MessageUtil.EVENT_TYPE_SUBSCRIBE)) {   
-                	AccessToken accessToken = BaseUtil.getAccessToken();
-                	WeChatUserInfo userInfo = BaseUtil.getUserInfo(accessToken.getAccess_token(), fromUserName);
+                	WeChatUserInfo userInfo = BaseUtil.getUserInfo(fromUserName);
                     textMessage.setMsgType(MessageUtil.RESP_MESSAGE_TYPE_TEXT);  
                     textMessage.setContent("欢迎你关注了该测试号。。。。。。");  
                     respMessage = MessageUtil.textMessageToXml(textMessage);

@@ -2,23 +2,15 @@ package com.pks.wechat.util;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -31,72 +23,20 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.pks.wechat.configuration.WeChatConfiguration;
-import com.pks.wechat.configuration.WeChatUrlConfiguration;
 import com.pks.wechat.material.BasicMaterial;
 import com.pks.wechat.material.NewsMaterial;
 import com.pks.wechat.material.OtherMaterial;
-import com.pks.wechat.material.UploadMaterail;
 import com.pks.wechat.message.resp.Article;
 import com.pks.wechat.message.resp.Music;
 import com.pks.wechat.pojo.AccessToken;
-import com.pks.wechat.pojo.JsApiTicket;
-import com.pks.wechat.pojo.KfInfo;
-import com.pks.wechat.pojo.OnLineKf;
-import com.pks.wechat.pojo.SNSUserInfo;
 import com.pks.wechat.pojo.WeChatGroup;
 import com.pks.wechat.pojo.WeChatMedia;
-import com.pks.wechat.pojo.WeChatOauth2Token;
 import com.pks.wechat.pojo.WeChatQRCode;
-import com.pks.wechat.pojo.WeChatUserInfo;
 import com.pks.wechat.pojo.WeChatUserList;
 
 public class AdvancedUtil {
 	private static Logger log = LoggerFactory.getLogger(AdvancedUtil.class);
 	
-	/**
-	 * 获取在线客服列表
-	 * @param accessToken
-	 * @return
-	 */
-	public static List<OnLineKf> getOnLineKfList(String accessToken){
-		String url = WeChatUrlConfiguration.KF_ONLINE_LIST_URL.replace("ACCESS_TOKEN", accessToken);
-		String result = CommonUtil.httpRequest(url);
-		if(result.equals("{\"kf_online_list\":[]}")){
-			Random random = new Random();
-			int case1 = random.nextInt(10);
-			int case2 = random.nextInt(10);
-			int auto1 = random.nextInt(5);
-			int auto2 = random.nextInt(5);
-			result = "{\"kf_online_list\": [{\"kf_account\": \"test1@test\",\"status\": 1,\"kf_id\": \"1001\",\"auto_accept\": "+auto1+",\"accepted_case\": "+case1+"},{\"kf_account\": \"test2@test\",\"status\": 1,\"kf_id\": \"1002\",\"auto_accept\": "+auto2+",\"accepted_case\": "+case2+"}]}";
-		};
-		System.out.println(result);
-		JSONObject jsonObject = JSONObject.fromObject(result);
-		List<OnLineKf> fkList = new ArrayList<OnLineKf>();
-		if(jsonObject.containsKey("kf_online_list")){
-			fkList = new Gson().fromJson(jsonObject.getString("kf_online_list"), new TypeToken<List<OnLineKf>>(){}.getType());
-		}
-		return fkList;
-	}
-	
-	/**
-	 * 获取公众号所有客服人员
-	 * @param accessToken
-	 * @return
-	 */
-	public static List<KfInfo> getKfList(String accessToken){
-		String url = WeChatUrlConfiguration.KF_ALL_URL.replace("ACCESS_TOKEN", accessToken);
-		String result = CommonUtil.httpGetRequest(url);
-		System.out.println(result);
-//		result = "{\"kf_list\":[{\"kf_account\":\"kf2001@gh_a7ccf31b9f9c\",\"kf_headimgurl\":\"http://mmbiz.qpic.cn/mmbiz/QfooYeGw5iacpapMaCAmAG5ahqjf5ibAQVGFyWmd9W3aO1GPg5KMxzX8NhWdl0eugLksjzibjyXlqnOkuvpicFg9Uw/300?wx_fmt=jpeg\",\"kf_id\":2001,\"kf_nick\":\"测试客服\",\"kf_wx\":\"pankesheng157\"},{\"kf_account\":\"kf2002@gh_a7ccf31b9f9c\",\"kf_headimgurl\":\"http://mmbiz.qpic.cn/mmbiz/QfooYeGw5iacpapMaCAmAG5ahqjf5ibAQVb3tKAyXicC6sq2L6nILmdncFBKeQiaG2JHuHsabibxFYs3iajvyovctYhA/300?wx_fmt=png\",\"kf_id\":2002,\"kf_nick\":\"测试客服2\",\"kf_wx\":\"lisfan\"},{\"kf_account\":\"kf2004@gh_a7ccf31b9f9c\",\"kf_headimgurl\":\"http://mmbiz.qpic.cn/mmbiz/QfooYeGw5iacpapMaCAmAG5ahqjf5ibAQVIbJG48QWkMuD5wic2yYXG1vJsYqRXPIgOKFhbS998giaRu8fBAbXNFuw/300?wx_fmt=png\",\"kf_id\":2004,\"kf_nick\":\"舟岛小鲜\",\"kf_wx\":\"yecool\"}]}";
-		JSONObject jsonObject = JSONObject.fromObject(result);
-		List<KfInfo> kfList = new ArrayList<KfInfo>();
-		if(jsonObject.containsKey("kf_list")){
-			kfList = new Gson().fromJson(jsonObject.getString("kf_list"), new TypeToken<List<KfInfo>>(){}.getType());
-		}
-		return kfList;
-	}
-
 	/**
 	 * @Description: 组装文本客服消息
 	 * @param openId
@@ -207,214 +147,6 @@ public class AdvancedUtil {
 		// 将jsonMsg中的picUrl替换为picurl
 		jsonMsg = jsonMsg.replace("picUrl", "picurl");
 		return jsonMsg;
-	}
-
-	/**
-	 * @Description: 发送客服消息
-	 * @param accessToken
-	 *            接口访问凭证
-	 * @param jsonMsg
-	 *            json格式的客服消息（包括touser、msgtype和消息内容）
-	 * @return
-	 * @throws
-	 * @author Administrator
-	 * @date 2015-12-22
-	 */
-	public static boolean sendCustomMessage(String accessToken, String jsonMsg) {
-		log.info("消息内容：{}", jsonMsg);
-		boolean result = false;
-		// 拼接请求地址
-		String requestUrl =WeChatUrlConfiguration.KF_MESSAGE_CUSTOM_SEND_URL;//"https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=ACCESS_TOKEN";
-		requestUrl = requestUrl.replace("ACCESS_TOKEN", accessToken);
-		// 发送客服消息
-		JSONObject jsonObject = CommonUtil.httpsRequest(requestUrl, "POST",jsonMsg);
-		if (null != jsonObject) {
-			int errorCode = jsonObject.getInt("errcode");
-			String errorMsg = jsonObject.getString("errmsg");
-			if (0 == errorCode) {
-				result = true;
-				log.info("客服消息发送成功 errcode:{} errmsg:{}", errorCode, errorMsg);
-			} else {
-				log.error("客服消息发送失败 errcode:{} errmsg:{}", errorCode, errorMsg);
-			}
-		}
-		return result;
-	}
-
-	/**
-	 * 获取access_token
-	 * 
-	 * @param appid
-	 *            凭证
-	 * @param appsecret
-	 *            密钥
-	 * @return
-	 */
-	public static AccessToken getAccessToken(String appid, String appsecret) {
-		System.out.println("accesstoken过期，重启获取accesstoken");
-		AccessToken accessToken = null;
-		String requestUrl = WeChatUrlConfiguration.TOKEN_URL.replace("APPID",
-				appid).replace("APPSECRET", appsecret);
-		JSONObject jsonObject = CommonUtil
-				.httpsRequest(requestUrl, "GET", null);
-		// 如果请求成功
-		if (null != jsonObject) {
-			try {
-				accessToken = new AccessToken();
-				accessToken.setAccess_token(jsonObject.getString("access_token"));
-				int expires_in = jsonObject.getInt("expires_in");
-				long endtime = new Date().getTime()+expires_in*1000-500*1000;
-				accessToken.setExpires_in(expires_in);
-				accessToken.setEndtime(endtime);
-			} catch (JSONException e) {
-				accessToken = null;
-				// 获取token失败
-				System.out.println("获取token失败 errcode:{} errmsg:{}"
-						+ jsonObject.getInt("errcode")
-						+ jsonObject.getString("errmsg"));
-				log.error("获取token失败 errcode:{} errmsg:{}",
-						jsonObject.getInt("errcode"),
-						jsonObject.getString("errmsg"));
-			}
-		}
-		return accessToken;
-	}
-
-	/**
-	 * @Description: 获取网页授权凭证
-	 * @param appId
-	 *            公众账号的唯一标识
-	 * @param appSecret
-	 *            公众账号的密钥
-	 * @param code
-	 * @return
-	 * @throws
-	 * @author Administrator
-	 * @date 2015-12-22
-	 */
-	public static WeChatOauth2Token getOauth2AccessToken(String appId,
-			String appSecret, String code) {
-		WeChatOauth2Token wat = null;
-		// 拼接请求地址
-		String requestUrl = WeChatUrlConfiguration.OAUTH2_ACCESSTOKEN_URL;// "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=SECRET&code=CODE&grant_type=authorization_code";
-		requestUrl = requestUrl.replace("APPID", appId);
-		requestUrl = requestUrl.replace("SECRET", appSecret);
-		requestUrl = requestUrl.replace("CODE", code);
-
-		// 获取网页授权凭证
-		JSONObject jsonObject = CommonUtil
-				.httpsRequest(requestUrl, "GET", null);
-		if (null != jsonObject) {
-			try {
-				wat = new WeChatOauth2Token();
-				wat.setAccessToken(jsonObject.getString("access_token"));
-				wat.setExpiresIn(jsonObject.getInt("expires_in"));
-				wat.setRefreshToken(jsonObject.getString("refresh_token"));
-				wat.setOpenId(jsonObject.getString("openid"));
-				wat.setScope(jsonObject.getString("scope"));
-			} catch (Exception e) {
-				wat = null;
-				int errorCode = jsonObject.getInt("errcode");
-				String errorMsg = jsonObject.getString("errmsg");
-				log.error("获取网页授权凭证失败 errcode:{} errmsg:{}", errorCode,
-						errorMsg);
-			}
-		}
-		return wat;
-	}
-
-	/**
-	 * @Description: 刷新网页授权凭证
-	 * @param appId
-	 *            公众账号的唯一标识
-	 * @param refreshToken
-	 * @return
-	 * @throws
-	 * @author Administrator
-	 * @date 2015-12-22
-	 */
-	public static WeChatOauth2Token refreshOauth2AccessToken(String appId,
-			String refreshToken) {
-		WeChatOauth2Token wat = null;
-		// 拼接请求地址			 
-		String requestUrl = WeChatUrlConfiguration.OAUTH2_REFRESHTOKEN_URL; //"https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=APPID&grant_type=refresh_token&refresh_token=REFRESH_TOKEN";
-		requestUrl = requestUrl.replace("APPID", appId);
-		requestUrl = requestUrl.replace("REFRESH_TOKEN", refreshToken);
-		// 刷新网页授权凭证
-		JSONObject jsonObject = CommonUtil
-				.httpsRequest(requestUrl, "GET", null);
-		if (null != jsonObject) {
-			try {
-				wat = new WeChatOauth2Token();
-				wat.setAccessToken(jsonObject.getString("access_token"));
-				wat.setExpiresIn(jsonObject.getInt("expires_in"));
-				wat.setRefreshToken(jsonObject.getString("refresh_token"));
-				wat.setOpenId(jsonObject.getString("openid"));
-				wat.setScope(jsonObject.getString("scope"));
-			} catch (Exception e) {
-				wat = null;
-				int errorCode = jsonObject.getInt("errcode");
-				String errorMsg = jsonObject.getString("errmsg");
-				log.error("刷新网页授权凭证失败 errcode:{} errmsg:{}", errorCode,
-						errorMsg);
-			}
-		}
-		return wat;
-	}
-
-	/**
-	 * @Description: 通过网页授权获取用户信息
-	 * @param accessToken
-	 *            网页授权接口调用凭证
-	 * @param openId
-	 *            用户标识
-	 * @return
-	 * @throws
-	 * @author Administrator
-	 * @date 2015-12-22
-	 */
-	@SuppressWarnings({ "unchecked", "deprecation" })
-	public static SNSUserInfo getSNSUserInfo(String accessToken, String openId) {
-		SNSUserInfo snsUserInfo = null;
-		// 拼接请求地址
-		// access_token 是 调用接口凭证
-		// openid 是 普通用户的标识，对当前公众号唯一
-		// lang 否 返回国家地区语言版本，zh_CN 简体，zh_TW 繁体，en 英语
-		String requestUrl = WeChatUrlConfiguration.SNS_USERINFO_URL; //"https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
-		requestUrl = requestUrl.replace("ACCESS_TOKEN", accessToken).replace(
-				"OPENID", openId);
-		// 通过网页授权获取用户信息
-		JSONObject jsonObject = CommonUtil
-				.httpsRequest(requestUrl, "GET", null);
-		if (null != jsonObject) {
-			try {
-				snsUserInfo = new SNSUserInfo();
-				// 用户的标识
-				snsUserInfo.setOpenId(jsonObject.getString("openid"));
-				// 昵称
-				snsUserInfo.setNickname(jsonObject.getString("nickname"));
-				// 性别（1是男性，2是女性，0是未知）
-				snsUserInfo.setSex(jsonObject.getInt("sex"));
-				// 用户所在国家
-				snsUserInfo.setCountry(jsonObject.getString("country"));
-				// 用户所在省份
-				snsUserInfo.setProvince(jsonObject.getString("province"));
-				// 用户所在城市
-				snsUserInfo.setCity(jsonObject.getString("city"));
-				// 用户头像
-				snsUserInfo.setHeadImgUrl(jsonObject.getString("headimgurl"));
-				//unionid (在公众号绑定到微信开放平台的时候才能获取到该值)
-//				snsUserInfo.setUnionid(jsonObject.getString("unionid"));
-				// 用户特权信息
-				snsUserInfo.setPrivilegeList(JSONArray.toList(jsonObject.getJSONArray("privilege"), List.class));
-			} catch (Exception e) {
-				snsUserInfo = null;
-				int errorCode = jsonObject.getInt("errcode");
-				String errorMsg = jsonObject.getString("errmsg");
-				log.error("获取用户信息失败 errcode:{} errmsg:{}", errorCode, errorMsg);
-			}
-		}
-		return snsUserInfo;
 	}
 
 	/**
@@ -545,66 +277,6 @@ public class AdvancedUtil {
 			log.error("根据ticket换取二维码失败：{}", e);
 		}
 		return filePath;
-	}
-
-	/**
-	 * @Description: 获取用户信息
-	 * @param accessToken
-	 *            接口访问凭证
-	 * @param openId
-	 *            用户标识
-	 * @return
-	 * @throws
-	 * @author Administrator
-	 * @date 2015-12-22
-	 */
-	public static WeChatUserInfo getUserInfo(String accessToken, String openId) {
-		WeChatUserInfo weixinUserInfo = null;
-		// 拼接请求地址
-		String requestUrl = WeChatUrlConfiguration.USER_INFO_URL; // "https://api.weixin.qq.com/cgi-bin/user/info?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
-		requestUrl = requestUrl.replace("ACCESS_TOKEN", accessToken).replace(
-				"OPENID", openId);
-		// 获取用户信息
-		JSONObject jsonObject = CommonUtil
-				.httpsRequest(requestUrl, "GET", null);
-
-		if (null != jsonObject) {
-			try {
-				weixinUserInfo = new WeChatUserInfo();
-				// 用户的标识
-				weixinUserInfo.setOpenId(jsonObject.getString("openid"));
-				// 关注状态（1是关注，0是未关注），未关注时获取不到其余信息
-				weixinUserInfo.setSubscribe(jsonObject.getInt("subscribe"));
-				// 用户关注时间
-				weixinUserInfo.setSubscribeTime(jsonObject
-						.getString("subscribe_time"));
-				// 昵称
-				weixinUserInfo.setNickname(jsonObject.getString("nickname"));
-				// 用户的性别（1是男性，2是女性，0是未知）
-				weixinUserInfo.setSex(jsonObject.getInt("sex"));
-				// 用户所在国家
-				weixinUserInfo.setCountry(jsonObject.getString("country"));
-				// 用户所在省份
-				weixinUserInfo.setProvince(jsonObject.getString("province"));
-				// 用户所在城市
-				weixinUserInfo.setCity(jsonObject.getString("city"));
-				// 用户的语言，简体中文为zh_CN
-				weixinUserInfo.setLanguage(jsonObject.getString("language"));
-				// 用户头像
-				weixinUserInfo
-						.setHeadImgUrl(jsonObject.getString("headimgurl"));
-			} catch (Exception e) {
-				if (0 == weixinUserInfo.getSubscribe()) {
-					log.error("用户{}已取消关注", weixinUserInfo.getOpenId());
-				} else {
-					int errorCode = jsonObject.getInt("errcode");
-					String errorMsg = jsonObject.getString("errmsg");
-					log.error("获取用户信息失败 errcode:{} errmsg:{}", errorCode,
-							errorMsg);
-				}
-			}
-		}
-		return weixinUserInfo;
 	}
 
 	/**
@@ -960,234 +632,10 @@ public class AdvancedUtil {
 		return filePath;
 	}
 	
-
-	/***
-	 * 素材管理相关
-	 */
-	/**
-	 * 
-	 * @param accessToken 访问令牌
-	 * @param file	文件地址
-	 * @param title	素材标题
-	 * @param introduction	素材描述
-	 * @return 
-	 */
-	public static UploadMaterail uploadMaterail(String accessToken,File file,String title,String introduction){
-		try {
-			//这块是用来处理如果上传的类型时video的类型的
-			JSONObject json = new JSONObject();
-			json.put("title", title);
-			json.put("introduction", introduction);
-			
-			//请求地址
-			String uploadMediaUrl = WeChatUrlConfiguration.MATERIAL_ADD_MATERIAL.replace("ACCESS_TOKEN", accessToken);
-			URL url = new URL(uploadMediaUrl);
-			String result = null;
-			long filelength = file.length();
-			String fileName = file.getName();
-			String suffix = fileName.substring(fileName.lastIndexOf("."),fileName.length());
-			String type = "";//根据后缀suffix进行判断类型
-			if("bmp".equals(suffix) || "png".equals(suffix) || "jpeg".equals(suffix) || "jpg".equals(suffix)||"gif".equals(suffix)){
-				type = "images";
-			}else if("mp3".equals(suffix) || "wma".equals(suffix) || "wav".equals(suffix) ||"amr".equals(suffix)){
-				type = "voice";
-			}else if("mp4".equals(suffix)){
-				type = "video";
-			}
-			
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestMethod("POST");
-			conn.setDoInput(true);
-			conn.setDoOutput(true);
-			conn.setUseCaches(false); //post方式不能使用缓存
-			//设置请求头信息
-			conn.setRequestProperty("Connection", "Keep-Alive");
-			conn.setRequestProperty("Charset", "UTF-8");
-			
-			//设置边界，这里的boundary 是http协议里面的分割符，（http协议 boundary）
-			String boundary = "----------" + System.currentTimeMillis(); 
-			conn.setRequestProperty("Content-Type", "multipart/form-data;boundary="+boundary);
-			
-			//请求正文信息
-			//第一部分
-			StringBuilder sb = new StringBuilder();
-			
-			//这块是post提交type值也就是文件对应的mime类型的值
-			sb.append("--");//必须多两道线 http协议要求的，用来分隔提交的参数用的
-			sb.append(boundary);
-			sb.append("\r\n");
-			sb.append("Content-Disposition: form-data;name=\"type\" \r\n\r\n"); //这里是参数名，参数名和值之间要用两次  
-			sb.append(type+"\r\n"); //参数的值  
-			
-			//这块是上传video是必须的参数，你们可以在这里根据文件类型做if/else 判断  
-            if("video".equals(type)){
-				sb.append("--"); // 必须多两道线  
-	            sb.append(boundary);  
-	            sb.append("\r\n");  
-	            sb.append("Content-Disposition: form-data;name=\"description\" \r\n\r\n");  
-	            sb.append(json.toString()+"\r\n");  
-            }
-            /** 
-             * 这里重点说明下，上面两个参数完全可以写在url地址后面 就想我们平时url地址传参一样， 
-             * http://api.weixin.qq.com/cgi-bin/material/add_material?access_token=##ACCESS_TOKEN##&type=""&description={} 这样，如果写成这样，上面的 
-             * 那两个参数的代码就不用写了，不过media参数能否这样提交我没有试，感兴趣的可以试试 
-             */  
-              
-            sb.append("--"); // 必须多两道线  
-            sb.append(boundary);  
-            sb.append("\r\n");  
-            //这里是media参数相关的信息，这里是否能分开下我没有试，感兴趣的可以试试  
-            sb.append("Content-Disposition: form-data;name=\"media\";filename=\""+ fileName + "\";filelength=\"" + filelength + "\" \r\n");  
-            sb.append("Content-Type:application/octet-stream\r\n\r\n");  
-//          System.out.println(sb.toString());  
-            byte[] head = sb.toString().getBytes("utf-8");  
-            // 获得输出流  
-            OutputStream out = new DataOutputStream(conn.getOutputStream());  
-            // 输出表头  
-            out.write(head);  
-            // 文件正文部分  
-            // 把文件已流文件的方式 推入到url中  
-            DataInputStream in = new DataInputStream(new FileInputStream(file));  
-            int bytes = 0;  
-            byte[] bufferOut = new byte[1024];  
-            while ((bytes = in.read(bufferOut)) != -1) {  
-                out.write(bufferOut, 0, bytes);  
-            }  
-            in.close();  
-            // 结尾部分，这里结尾表示整体的参数的结尾，结尾要用"--"作为结束，这些都是http协议的规定  
-            byte[] foot = ("\r\n--" + boundary + "--\r\n").getBytes("utf-8");// 定义最后数据分隔线  
-            out.write(foot);  
-            out.flush();  
-            out.close();  
-            StringBuffer buffer = new StringBuffer();  
-            BufferedReader reader = null;  
-            // 定义BufferedReader输入流来读取URL的响应  
-            reader = new BufferedReader(new InputStreamReader(  
-            		conn.getInputStream()));  
-            String line = null;  
-            while ((line = reader.readLine()) != null) {  
-                buffer.append(line);  
-            }  
-            if (result == null) {  
-                result = buffer.toString();  
-            }  
-            // 使用JSON-lib解析返回结果  
-            JSONObject jsonObject = JSONObject.fromObject(result);
-            UploadMaterail materail = new UploadMaterail();
-            if(jsonObject!=null && jsonObject.containsKey("media_id")){
-            	materail.setMedia_id(jsonObject.getString("media_id"));
-            	if(jsonObject.containsKey("url")){
-            		materail.setUrl(jsonObject.getString("url"));
-            	}
-            }
-            return materail;
-        } catch (IOException e) { 
-            e.printStackTrace(); 
-            return null;
-        }
-	}
-	
-	/**
-	 * 根据分页信息 类型获得jsonObejct对象 在这个方法中可以自由在jsonObject 获取素材总数等信息
-	 * @param accessToken
-	 * @param type
-	 * @param offset
-	 * @param count
-	 * @return
-	 */
-	public static JSONObject getMaterailListJson(String accessToken,String type,int offset,int count){
-		String url = WeChatUrlConfiguration.MATERIAL_BATCHGET_URL.replace("ACCESS_TOKEN", accessToken);
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("type", type);
-		params.put("offset", offset);
-		params.put("count", count);
-		String result = CommonUtil.httpPostRequest(url, params);
-		JSONObject jsonObject = JSONObject.fromObject(result);
-		return jsonObject;
-	}
-	
-	/**
-	 * 根据分页信息 类型获取素材列表信息，不包含素材数量等信息
-	 * @param accessToken
-	 * @param type
-	 * @param offset
-	 * @param count
-	 * @return
-	 */
-	public static List<BasicMaterial> getMaterailList(String accessToken,String type,int offset,int count){
-		String url = WeChatUrlConfiguration.MATERIAL_BATCHGET_URL.replace("ACCESS_TOKEN", accessToken);
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("type", type);
-		params.put("offset", offset);
-		params.put("count", count);
-		String result = CommonUtil.httpPostRequest(url, params);
-		JSONObject jsonObject = JSONObject.fromObject(result);
-		if(jsonObject!=null && jsonObject.containsKey("item")){
-			List<BasicMaterial> list = new ArrayList<BasicMaterial>();
-			if("news".equals(type)){
-				list = new Gson().fromJson(jsonObject.getString("item"),  new TypeToken<List<NewsMaterial>>(){}.getType());
-			}else{
-				list = new Gson().fromJson(jsonObject.getString("item"),  new TypeToken<List<OtherMaterial>>(){}.getType());
-			}
-			return list;
-		}
-		return null;
-	}
-	
-	/**
-	 * 获取保存的accesstoken 如果accesstoken为null 或者过去重新获取accesstoken
-	 * @return
-	 */
-	public static AccessToken getAccessToken(){
-		AccessToken accessToken = WeChatConfiguration.accessToken;
-		if(accessToken==null || accessToken.getEndtime()<new Date().getTime()){
-			accessToken = AdvancedUtil.getAccessToken(WeChatConfiguration.appId, WeChatConfiguration.appSecret);
-			WeChatConfiguration.accessToken = accessToken;
-		}
-		return accessToken;
-	}
-	
-	
-	 public static JsApiTicket getJsApiTicket(String accessToken) {  
-       JsApiTicket jsApiTicket = null;  
-       String requestUrl = WeChatUrlConfiguration.JSAPI_TICKET_URL.replace("ACCESS_TOKEN", accessToken);  
-       JSONObject jsonObject = CommonUtil.httpsRequest(requestUrl, "GET", null);  
-       // 如果请求成功  
-       if (null != jsonObject) {  
-           try {  
-               jsApiTicket = new JsApiTicket();  
-               jsApiTicket.setTicket(jsonObject.getString("ticket")); 
-               int expires_in = jsonObject.getInt("expires_in");
-               long endtime = new Date().getTime()+expires_in*1000 - 500*1000;
-               jsApiTicket.setExpires_in(expires_in);
-               jsApiTicket.setEndtime(endtime);
-           } catch (JSONException e) {  
-               accessToken = null;  
-               // 获取jsApiTicket失败  
-               log.error("获取jsApiTicket失败 errcode:{} errmsg:{}", jsonObject.getInt("errcode"), jsonObject.getString("errmsg"));  
-           }  
-       }  
-       return jsApiTicket;  
-   }
-	
-	/**
-	 * 获取jsapiticket 如果为空或者过期 重新发起请求获取
-	 * @return
-	 */
-	public static JsApiTicket getJsApiTicket(){
-		JsApiTicket jsApiTicket = WeChatConfiguration.jsapi_ticket;
-		if(jsApiTicket==null || jsApiTicket.getEndtime()<new Date().getTime()){
-			AccessToken accessToken = AdvancedUtil.getAccessToken();
-			jsApiTicket = AdvancedUtil.getJsApiTicket(accessToken.getAccess_token());
-			WeChatConfiguration.jsapi_ticket = jsApiTicket;
-		}
-		return jsApiTicket;
-	}
-	
 	public static void main(String args[]) {
 		String type = "image";
-		AccessToken accessToken = AdvancedUtil.getAccessToken(WeChatConfiguration.appId, WeChatConfiguration.appSecret);
-		JSONObject jsonObject = getMaterailListJson(accessToken.getAccess_token(), type, 0, 50);
+		AccessToken accessToken = BaseUtil.getAccessToken();
+		JSONObject jsonObject = MaterialUtil.getMaterailListJson(accessToken.getAccess_token(), type, 0, 50);
 		if(jsonObject!=null && jsonObject.containsKey("item")){
 			List<BasicMaterial> list = new ArrayList<BasicMaterial>();
 			//List<String> itemList = new Gson().fromJson(jsonObject.getString("item"), new TypeToken<List<String>>(){}.getType());
