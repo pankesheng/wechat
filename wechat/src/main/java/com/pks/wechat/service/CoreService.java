@@ -98,6 +98,10 @@ public class CoreService {
 		                	respMessage = MessageUtil.textMessageToXml(textMessage);
 		                }
 	            	}
+	            }else{
+	            	textMessage.setContent(content);
+                	SessionList.resetQuartz(fromUserName,Session.phase_kf);
+                	respMessage = MessageUtil.textMessageToXml(textMessage);
 	            }
             }  
             // 图片消息  

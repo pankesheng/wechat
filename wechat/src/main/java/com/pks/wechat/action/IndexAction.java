@@ -52,12 +52,9 @@ public class IndexAction extends BasicAction {
 	// 登录后的菜单列表
 	@RequestMapping("/menu")
 	public void menu(HttpServletRequest request, PrintWriter out) {
-
-		MenuDto m11 = new MenuDto("通讯录", Configuration.getContextPath() + "/user/tolist.do");
-		MenuDto m1 = MenuDto.initPMenuDto("菜单", m11);
+		MenuDto m1 = new MenuDto("菜单", Configuration.getContextPath() + "/menubutton/tolist.do");
 		List<MenuDto> menu = new ArrayList<MenuDto>();
 		menu.add(m1);
-
 		String result = ServiceResult.initSuccessJson(menu);
 		out.write(result);
 	}

@@ -62,7 +62,7 @@ public class WeChatPayController {
 		SNSUserInfo snsUserInfo = Oauth2Util.oauth2(code);
 		model.addAttribute("snsUserInfo", snsUserInfo);
 		model.addAttribute("basePath", Configuration.getContextPath());
-		return "/www/zone.jsp";
+		return "/wxpay/index2.jsp";
 	}
 	
 	// userId 用户id

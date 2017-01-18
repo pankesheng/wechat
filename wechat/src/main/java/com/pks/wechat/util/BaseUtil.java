@@ -31,7 +31,6 @@ public class BaseUtil {
 	 * @return
 	 */
 	public static AccessToken getAccessToken(String appid, String appsecret) {
-		System.out.println("accesstoken过期，重启获取accesstoken");
 		AccessToken accessToken = null;
 		String requestUrl = WeChatUrlConfiguration.TOKEN_URL.replace("APPID",appid).replace("APPSECRET", appsecret);
 		JSONObject jsonObject = CommonUtil.httpsRequest(requestUrl, "GET", null);
