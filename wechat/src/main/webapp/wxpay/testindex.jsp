@@ -28,7 +28,7 @@
 	}
 	
 	function aaaa(){
-		window.location.href="${contextPath}/wxpay/oauth.ajax";
+		window.location.href="${contextPath}/wechat/wxpay/oauth.ajax";
 	}
 	
   </script>

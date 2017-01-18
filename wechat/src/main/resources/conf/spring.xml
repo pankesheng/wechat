@@ -70,7 +70,7 @@
 		<property name="contextPath" value="${configuration.contextPath}"/>
 	</bean>
 	
-	<bean id="configuration" class="com.pks.wechat.configuration.WeChatConfiguration">
+	<bean id="wechatconfiguration" class="com.pks.wechat.configuration.WeChatConfiguration">
 		<property name="token" value="${wechatconfiguration.token}" />
 		<property name="appId" value="${wechatconfiguration.appId}" />
 		<property name="appSecret" value="${wechatconfiguration.appSecret}" />
